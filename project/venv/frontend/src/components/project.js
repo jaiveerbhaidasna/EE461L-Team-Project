@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 //     <td>{props.hardwareset.name}</td>
 //     <td>{props.hardwareset.capacity}</td>
 //     <td>{props.hardwareset.availability}</td>
+//     <td>{props.hardwareset.request}</td>
 //     <td>
 //       <input></input>
 //     </td>
@@ -23,8 +24,9 @@ import { Link } from "react-router-dom";
 class Project extends Component {
   state = {
     name: "",
-    capacity: "",
-    availability: "",
+    capacity: 0,
+    availability: 0,
+    request: 0
   };
 
 //   componentDidMount() {
@@ -47,6 +49,26 @@ class Project extends Component {
   //       return <HardwareSet hardwareset={currentset} checkin={this.checkin} checkout={this.checkout} key={currentset._id}/>;
   //     })
   //   }
+
+
+//   checkin(id) {
+//     axios.post('hardwaresets/checkin/' + id)
+//         .then(response => console.log(response.data))
+//         .catch((error) => {
+//             console.log(error);
+//         })
+//     window.location.reload();
+//   }
+
+//   checkout(id) {
+//     axios.post('hardwaresets/checkout/' + id)
+//         .then(response => console.log(response.data))
+//         .catch((error) => {
+//             console.log(error);
+//         })
+//     window.location.reload();
+//   }
+
 
   render() {
     return (
