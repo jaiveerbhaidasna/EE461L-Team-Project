@@ -36,7 +36,7 @@ class App extends Component{
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ml-auto">
                 <ButtonGroup aria-label="Basic example" className="mr-2">
-                  <Button href="/mission" variant="light">
+                  <Button href="/" variant="light">
                     Home
                   </Button>
                   <Button href="/datasets" variant="light">
