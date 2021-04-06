@@ -1,12 +1,19 @@
 import click
 from flask import current_app, g
 from pymongo import MongoClient
+from backend.__init__ import client
 
-def get_db():
+def get_login_db():
 	if 'db' not in g:
-		g.client = MongoClient("mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
-		g.db = g.client.db
+		g.db = client.db
 		g.collection = g.db['login_info']
+
+	return g.collection
+
+def get_project_db():
+	if 'db' not in g:
+		g.db = client.db
+		g.collection = g.db['projects']
 
 	return g.collection
 
