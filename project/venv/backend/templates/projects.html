@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+  	<label>Create New Project</label>
+    <label for="name">Project Name</label>
+    <input name="name" id="name">
+    <label for="description">Description</label>
+    <input name="description" id="description">
+    <label for="new_id">Project ID</label>
+    <input name="new_id" id="new_id">
+    <label>Load Existing Project</label>
+    <label for="existing_id">Project ID</label>
+    <input name="existing_id" id="existing_id">
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}
