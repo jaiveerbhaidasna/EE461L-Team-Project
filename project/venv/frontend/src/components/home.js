@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 //     <td>{props.projects.id}</td>
 //     <td>{props.projects.description}</td>
 //     <td>
-//       <Link to={"/projects/"+props.projects._id}>Log in</Link>
+//       <Link style={{color:"Aqua"}} to={"/projects/"+props.projects._id}>Log in</Link>
 //     </td>
 //   </tr>
 // );
@@ -39,8 +39,8 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <h1>Projects</h1>
-        <Table striped bordered hover variant="dark">
+        <h1 className="projects">Projects</h1>
+        <Table  style={{color:"Aqua"}} striped bordered hover variant="dark">
           <thead>
             <tr>
               <th>Project Name</th>
@@ -54,24 +54,24 @@ class Home extends Component {
               <td>Project 1</td>
               <td>111</td>
               <th>Description</th>
-              <td><Link to="/project">Log in</Link></td>
+              <td><Link  style={{color:"Aqua"}} to="/project">Log in</Link></td>
             </tr>
             <tr>
               <td>Project 2</td>
               <td>222</td>
               <th>Description</th>
-              <td><Link to="/project">Log in</Link></td>
+              <td><Link  style={{color:"Aqua"}} to="/project">Log in</Link></td>
             </tr>
             <tr>
               <td >Project3</td>
               <td>333</td>
               <th>Description</th>
-              <td><Link to="/project">Log in</Link></td>
+              <td><Link style={{color:"Aqua"}} to="/project">Log in</Link></td>
             </tr>
             {/* { this.fillTable() } */}
           </tbody>
         </Table>
-        <Link to="/createProject">Create New Project</Link>
+        <Link id="newproject" to="/createProject">Create New Project</Link>
       </div>
     );
   }

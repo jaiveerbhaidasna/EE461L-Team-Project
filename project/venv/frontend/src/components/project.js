@@ -10,39 +10,39 @@ import { Link } from "react-router-dom";
 //     <td>{props.hardwareset.availability}</td>
 //     <td>{props.hardwareset.request}</td>
 //     <td>
-//       <input></input>
+//       <input onChange={this.handleChange} ></input>
 //     </td>
 //     <td>
-//       <Button href="." onClick={() => { props.checkin(props.hardwareset._id) }}>Check in</Button>
+//       <Button href="." onClick={() => { props.checkin(props.hardwareset._id, {this.state.request}) }}>Check in</Button>
 //     </td>
 //     <td>
-//       <Button href="." onClick={() => { props.checkout(props.hardwareset._id) }}>Check out</Button>
+//       <Button href="." onClick={() => { props.checkout(props.hardwareset._id, {this.state.request}) }}>Check out</Button>
 //     </td>
 //   </tr>
 // );
 
 class Project extends Component {
   state = {
-    name: "",
+    name: "Project x",
     capacity: 0,
     availability: 0,
-    request: 0
+    request: 0,
   };
 
-//   componentDidMount() {
-//     axios
-//       .get("/hardwaresets/" + this.props.match.params.id)
-//       .then((response) => {
-//         this.setState({
-//           name: response.data.name,
-//           capacity: response.data.capacity,
-//           availability: response.data.availability,
-//         });
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       });
-//   }
+  //   componentDidMount() {
+  //     axios
+  //       .get("/hardwaresets/" + this.props.match.params.id)
+  //       .then((response) => {
+  //         this.setState({
+  //           name: response.data.name,
+  //           capacity: response.data.capacity,
+  //           availability: response.data.availability,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
 
   //   fillTable() {
   //     return this.state.hardwaresets.map(currentset => {
@@ -50,30 +50,35 @@ class Project extends Component {
   //     })
   //   }
 
+  //   checkin(id, request) {
+  //     axios.post('hardwaresets/checkin/' + id + "/" + request)
+  //         .then(response => console.log(response.data))
+  //         .catch((error) => {
+  //             console.log(error);
+  //         })
+  //     window.location.reload();
+  //   }
 
-//   checkin(id) {
-//     axios.post('hardwaresets/checkin/' + id)
-//         .then(response => console.log(response.data))
-//         .catch((error) => {
-//             console.log(error);
-//         })
-//     window.location.reload();
-//   }
+  //   checkout(id, request) {
+  //     axios.post('hardwaresets/checkout/' + id + "/" + request)
+  //         .then(response => console.log(response.data))
+  //         .catch((error) => {
+  //             console.log(error);
+  //         })
+  //     window.location.reload();
+  //   }
 
-//   checkout(id) {
-//     axios.post('hardwaresets/checkout/' + id)
-//         .then(response => console.log(response.data))
-//         .catch((error) => {
-//             console.log(error);
-//         })
-//     window.location.reload();
-//   }
-
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
 
   render() {
     return (
       <div>
-        <Table striped bordered hover variant="dark">
+          <h1 className="project">{this.state.name}</h1>
+        <Table style={{color:"yellow"}} striped bordered hover variant="dark">
           <thead>
             <tr>
               <th>Hardware Set Name</th>
@@ -116,7 +121,7 @@ class Project extends Component {
               <td>100</td>
               <td>100</td>
               <td>
-                <input></input>
+                <input name="request" onChange={this.handleChange}></input>
               </td>
               <td>
                 <Button>Check in</Button>
@@ -129,7 +134,7 @@ class Project extends Component {
             {/* { this.fillTable() } */}
           </tbody>
         </Table>
-        <Link to="/createProject">Create New Project</Link>
+        <Link id="newproject" to="..">Log out of project</Link>
       </div>
     );
   }
