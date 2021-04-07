@@ -7,7 +7,6 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-#from . import get_login_db
 
 client = MongoClient(
     "mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -55,12 +54,10 @@ def register():
             e = db.insert_one(entry).inserted_id
 
             return redirect(url_for('auth.login'))
-
         #flash(error)
+    return "hi"
 
-    #return render_template('auth/register.html')
-
-@app.route('/auth/login', methods=('GET', 'POST'))
+@app.route('/login', methods=('GET', 'POST'))
 def login():
     if (request.method == 'POST'):
         email = request.form.get('email')
