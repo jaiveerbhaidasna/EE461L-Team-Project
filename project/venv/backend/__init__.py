@@ -94,75 +94,55 @@ def projects():
     # Give the user the option to create a new project or enter the
     # project ID of an existing project
     if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
-        new_id = request.form['new_id']
-
-        existing_id = request.form['existing_id']
+        dictionary = json.loads(json.dumps(request.json))
+        name = dictionary['name']
+        description = dictionary['description']
+        capacity = dictionary['capacity']
+        availability = dictionary['availability']
+        id = dictionary['id']
 
         login_db = get_login_db()
         project_db = get_project_db()
         error = None
 
-        if not name and not description and not new_id and not existing_id:
-            # Nothing filled out
-            error = 'Create a new project or load an existing one'
-        elif not existing_id:
-            # New project
-            if not name or not description or not new_id:
-                # Missing at least one input
-                error = 'Please fill out the missing fields'
-            else:
-                # Check if project ID already taken
-                new_id_found = project_db.find_one({"project id":new_id})
-                if new_id_found is not None:
-                    # ID already taken
-                    error = 'Project ID already taken'
-        else:
-            # Load existing project
-            if not name or not description or not new_id:
-                # Other fields not empty
-                error = 'Please delete all unnecessary fields'
-            else:
-                # Check if project ID exists
-                existing_id_found = project_db.find_one({"project id":existing_id})
-                if existing_id_found is None:
-                    # Project not found
-                    error = 'No matching project found'
-
+        if not name:
+            error = 'name is required'
+        if not description:
+            error = 'description is required'
+        if not id:
+            error = 'id is required'
+        if not capacity:
+            error = 'capacity is required'
+        if not availability:
+            error = 'availability is required'
+        id_input = project_db.find_one({"id": id})
+        if id_input is not None:
+            error = 'id is already taken'
         if error is None:
             #if existing_id is None:
                 # Create new project and add to database
-                l = login_db.update_one(
-                    {"username":session.get('username')},
-                    {'$push': {"projects":new_id}}
-                )
-                project_info = {
-                    "project id":new_id,
-                    "name":"Hardware Set 1",
-                    "capacity":100,
-                    "available":100,
-                    "name":"Hardware Set 2",
-                    "capacity":100,
-                    "available":100
-                }
-                project_db.insert_one(project_info)
+            project_info = {
+                "id":id,
+                "name":name,
+                "description": description,
+                "capacity": capacity,
+                "availability": availability
+            }
+            project_db.insert_one(project_info)
             #else:
                 # Load existing project from database
         #flash(error)
-    #return render_template('projects/projects.html')
+    return "hi"
 
 
 def get_login_db():
-    if 'db' not in g:
-        g.db = client.db
-        g.collection = g.db['login_info']
+    g.db = client.db
+    g.collection = g.db['login_info']
 
     return g.collection
 
 def get_project_db():
-    if 'db' not in g:
-        g.db = client.db
-        g.collection = g.db['projects']
+    g.db = client.db
+    g.collection = g.db['projects']
 
     return g.collection

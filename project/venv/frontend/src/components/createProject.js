@@ -6,7 +6,9 @@ class CreateProject extends Component {
   state = {
     name: "",
     id: "",
-    description: ""
+    description: "",
+    capacity: 0,
+    availability: 0
   };
 
   handleChange = (e) => {
@@ -21,7 +23,9 @@ class CreateProject extends Component {
     const project = {
         name: this.state.email,
         id: this.state.password,
-        description: this.state.description
+        description: this.state.description,
+        capacity: this.state.capacity,
+        availability: this.state.availability
     }
 
     axios.post("http://localhost:5000/projects/", project)
@@ -38,28 +42,44 @@ class CreateProject extends Component {
     return (
       <div className="Login">
         <Form onSubmit={this.handleSubmit}>
-          <Form.Group size="lg" controlId="email">
+          <Form.Group size="lg" controlId="name">
             <Form.Label>Project Name</Form.Label>
             <Form.Control
               autoFocus
-              type="email"
-              name="email"
+              type="name"
+              name="name"
               onChange={this.handleChange}
             />
           </Form.Group>
-          <Form.Group size="lg" controlId="password">
+          <Form.Group size="lg" controlId="description">
             <Form.Label>Description</Form.Label>
             <Form.Control
-              type="password"
-              name="password"
+              type="description"
+              name="description"
               onChange={this.handleChange}
             />
           </Form.Group>
-          <Form.Group size="lg" controlId="password">
+          <Form.Group size="lg" controlId="id">
             <Form.Label>Project ID</Form.Label>
             <Form.Control
-              type="password"
-              name="password"
+              type="id"
+              name="id"
+              onChange={this.handleChange}
+            />
+          </Form.Group>
+          <Form.Group size="lg" controlId="capacity">
+            <Form.Label>Capacity</Form.Label>
+            <Form.Control
+              type="capacity"
+              name="capacity"
+              onChange={this.handleChange}
+            />
+          </Form.Group>
+          <Form.Group size="lg" controlId="availability">
+            <Form.Label>Availability</Form.Label>
+            <Form.Control
+              type="availability"
+              name="availability"
               onChange={this.handleChange}
             />
           </Form.Group>
