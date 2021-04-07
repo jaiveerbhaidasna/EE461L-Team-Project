@@ -107,6 +107,58 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+
+def check_in():
+    if (request.method == 'POST'):
+        dictionary = json.loads(json.dumps(request.json))
+        _id = dictionary['_id']
+        amount = dictionary['number']
+        db = get_project_db()
+        error = None
+
+        name_found = db.find_one({"_id":_id})
+        if (name_found is None):
+            error = 'No matching Hardware Set with given name'
+
+        name_found_available = name_found['available']
+        #name_found_capacity = name_found['capacity']
+        
+        if (error is None and name_found_available):
+            db.update_one({"_id":id}, {"$set": { 'available':  name_found_available + int(amount)}})
+            return 'Success'
+
+    return 'Failure'
+
+def check_out():
+    if (request.method == 'POST'):
+        dictionary = json.loads(json.dumps(request.json))
+        _id = dictionary['_id']
+        amount = dictionary['number']
+        db = get_project_db()
+        error = None
+
+        name_found = db.find_one({"_id":_id})
+        if (name_found is None):
+            error = 'No matching Hardware Set with given name'
+
+        name_found_available = name_found['available']
+        
+        if (error is None and name_found_available >= int(amount)):
+            db.update_one({"_id":id}, {"$set": { 'available':  name_found_available - int(amount)}})
+            return 'Success'
+
+    return 'Failure'
+    
+def get_projects():
+    if (request.method == 'GET'):
+        dictionary = json.loads(json.dumps(request.json))
+        email = dictionary['email']
+        projectID = dictionary['project']
+        db = get_login_db()
+        error = None
+
+    return 'Failure'
+
 def get_login_db():
     g.db = client.db
     g.collection = g.db['login_info']
