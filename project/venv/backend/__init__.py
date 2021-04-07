@@ -118,14 +118,9 @@ def projects():
         id_input = project_db.find_one({"id": id})
         if id_input is not None:
             error = 'id is already taken'
-
         if error is None:
             #if existing_id is None:
                 # Create new project and add to database
-            l = login_db.update_one(
-                {"email":session.get('email')},
-                {'$push': {"projects":id}}
-            )
             project_info = {
                 "id":id,
                 "name":name,
@@ -137,19 +132,17 @@ def projects():
             #else:
                 # Load existing project from database
         #flash(error)
-    #return render_template('projects/projects.html')
+    return "hi"
 
 
 def get_login_db():
-    if 'db' not in g:
-        g.db = client.db
-        g.collection = g.db['login_info']
+    g.db = client.db
+    g.collection = g.db['login_info']
 
     return g.collection
 
 def get_project_db():
-    if 'db' not in g:
-        g.db = client.db
-        g.collection = g.db['projects']
+    g.db = client.db
+    g.collection = g.db['projects']
 
     return g.collection

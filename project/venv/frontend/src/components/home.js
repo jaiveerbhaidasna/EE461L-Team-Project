@@ -67,9 +67,9 @@ class Home extends Component {
               <td >Project3</td>
               <td>333</td>
               <th>Description</th>
-              <td><Link style={{color:"Aqua"}} to="/project">Log in</Link></td>
+              <td><Link style={{color:"Aqua"}} to="/project/1234">Log in</Link></td>
             </tr>
-            {/* { this.fillTable() } */}
+            { this.fillTable() }
           </tbody>
         </Table>
         <Link id="newproject" to="/createProject">Create New Project</Link>
