@@ -22,7 +22,7 @@ class Login extends Component {
         email: this.state.email,
         password: this.state.password,
     }
-    axios.post("http://localhost:5000/auth/login", user)
+    axios.post("http://localhost:5000/login", user)
         .then(res => {
             console.log(res.data);
             window.location = "/";

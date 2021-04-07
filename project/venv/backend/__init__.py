@@ -7,6 +7,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
+import json
 
 client = MongoClient(
     "mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -33,8 +34,13 @@ def create_app():
 @app.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        dictionary = json.loads(json.dumps(request.json))
+        email = dictionary['email']
+        password = dictionary['password']
+        #email = request.form['email']
+        #password = request.form['password']
+        print(email)
+        print(password)
         db = get_login_db()
         error = None
         if not email:
@@ -44,7 +50,7 @@ def register():
         email_found = db.find_one({"email": email})
         if email_found is not None:
             error = 'email already taken'
-
+      
         if error is None:
             entry = {
                 "email": (email),
@@ -53,15 +59,16 @@ def register():
             }
             e = db.insert_one(entry).inserted_id
 
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('login'))
         #flash(error)
     return "hi"
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     if (request.method == 'POST'):
-        email = request.form.get('email')
-        password = request.form.get('password')
+        dictionary = json.loads(json.dumps(request.json))
+        email = dictionary['email']
+        password = dictionary['password']
         db = get_login_db()
         error = None
         #encrypted_username = encrypt(username)
@@ -74,6 +81,7 @@ def login():
             return redirect(url_for('projects'))
         #flash(error)
     #return render_template('auth/login.html')
+    return("test")
 
 @app.route('/logout')
 def logout():
