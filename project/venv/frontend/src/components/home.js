@@ -1,18 +1,19 @@
 import { Component } from "react";
 import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import axios from 'axios'
 
 
-// const Project = (props) => (
-//   <tr>
-//     <td>{props.projects.name}</td>
-//     <td>{props.projects.id}</td>
-//     <td>{props.projects.description}</td>
-//     <td>
-//       <Link style={{color:"Aqua"}} to={"/projects/"+props.projects._id}>Log in</Link>
-//     </td>
-//   </tr>
-// );
+const Project = (props) => (
+  <tr>
+    <td>{props.projects.name}</td>
+    <td>{props.projects.id}</td>
+    <td>{props.projects.description}</td>
+    <td>
+      <Link style={{color:"Aqua"}} to={"/projects/"+props.projects._id}>Log in</Link>
+    </td>
+  </tr>
+);
 
 class Home extends Component {
 
@@ -20,21 +21,21 @@ class Home extends Component {
     projects: []
   };
 
-  // componentDidMount() {
-  //     axios.get('/projects/')
-  //       .then(response => {
-  //         this.setState({ projects: response.data })
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       })
-  //   }
+  componentDidMount() {
+      axios.get('/projects/')
+        .then(response => {
+          this.setState({ projects: response.data })
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    }
 
-//   fillTable() {
-//     return this.state.projects.map(currentproject => {
-//       return <Project project={currentproject} key={currentset._id}/>;
-//     })
-//   }  
+  fillTable() {
+    return this.state.projects.map(currentproject => {
+      return <Project project={currentproject} key={currentproject._id}/>;
+    })
+  }  
 
   render() {
     return (

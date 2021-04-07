@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Form, Button } from "react-bootstrap";
-//import axios from 'axios'
+import axios from 'axios'
 
 class CreateProject extends Component {
   state = {
@@ -18,19 +18,20 @@ class CreateProject extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    // const user = {
-    //     email: this.state.email,
-    //     password: this.state.password,
-    // }
+    const project = {
+        name: this.state.email,
+        id: this.state.password,
+        description: this.state.description
+    }
 
-    // axios.post("http://localhost:5000/auth/login", user)
-    //     .then(res => {
-    //         console.log(res.data);
-    //         //window.location = "/";
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     })
+    axios.post("http://localhost:5000/projects/", project)
+        .then(res => {
+            console.log(res.data);
+            window.location = "/";
+        })
+        .catch(err => {
+            console.log(err);
+        })
   };
 
   render() {

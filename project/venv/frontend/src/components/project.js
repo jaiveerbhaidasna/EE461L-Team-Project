@@ -1,25 +1,25 @@
 import { Component } from "react";
 import { Table, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-//import axios from 'axios'
+import axios from 'axios'
 
-// const HardwareSet = (props) => (
-//   <tr>
-//     <td>{props.hardwareset.name}</td>
-//     <td>{props.hardwareset.capacity}</td>
-//     <td>{props.hardwareset.availability}</td>
-//     <td>{props.hardwareset.request}</td>
-//     <td>
-//       <input onChange={this.handleChange} ></input>
-//     </td>
-//     <td>
-//       <Button href="." onClick={() => { props.checkin(props.hardwareset._id, {this.state.request}) }}>Check in</Button>
-//     </td>
-//     <td>
-//       <Button href="." onClick={() => { props.checkout(props.hardwareset._id, {this.state.request}) }}>Check out</Button>
-//     </td>
-//   </tr>
-// );
+const HardwareSet = (props) => (
+  <tr>
+    <td>{props.hardwareset.name}</td>
+    <td>{props.hardwareset.capacity}</td>
+    <td>{props.hardwareset.availability}</td>
+    <td>{props.hardwareset.request}</td>
+    <td>
+      <input onChange={this.handleChange} ></input>
+    </td>
+    <td>
+      <Button href="." onClick={() => { props.checkin(props.hardwareset._id, this.state.request) }}>Check in</Button>
+    </td>
+    <td>
+      <Button href="." onClick={() => { props.checkout(props.hardwareset._id, this.state.request) }}>Check out</Button>
+    </td>
+  </tr>
+);
 
 class Project extends Component {
   state = {
@@ -29,44 +29,43 @@ class Project extends Component {
     request: 0,
   };
 
-  //   componentDidMount() {
-  //     axios
-  //       .get("/hardwaresets/" + this.props.match.params.id)
-  //       .then((response) => {
-  //         this.setState({
-  //           name: response.data.name,
-  //           capacity: response.data.capacity,
-  //           availability: response.data.availability,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
+    // componentDidMount() {
+    //   axios.get("/" + this.props.match.params.id)
+    //     .then((response) => {
+    //       this.setState({
+    //         name: response.data.name,
+    //         capacity: response.data.capacity,
+    //         availability: response.data.availability,
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // }
 
-  //   fillTable() {
-  //     return this.state.hardwaresets.map(currentset => {
-  //       return <HardwareSet hardwareset={currentset} checkin={this.checkin} checkout={this.checkout} key={currentset._id}/>;
-  //     })
-  //   }
+    fillTable() {
+      return this.state.hardwaresets.map(currentset => {
+        return <HardwareSet hardwareset={currentset} checkin={this.checkin} checkout={this.checkout} key={currentset._id}/>;
+      })
+    }
 
-  //   checkin(id, request) {
-  //     axios.post('hardwaresets/checkin/' + id + "/" + request)
-  //         .then(response => console.log(response.data))
-  //         .catch((error) => {
-  //             console.log(error);
-  //         })
-  //     window.location.reload();
-  //   }
+    checkin(id, request) {
+      axios.post('hardwaresets/checkin/' + id + "/" + request)
+          .then(response => console.log(response.data))
+          .catch((error) => {
+              console.log(error);
+          })
+      window.location.reload();
+    }
 
-  //   checkout(id, request) {
-  //     axios.post('hardwaresets/checkout/' + id + "/" + request)
-  //         .then(response => console.log(response.data))
-  //         .catch((error) => {
-  //             console.log(error);
-  //         })
-  //     window.location.reload();
-  //   }
+    checkout(id, request) {
+      axios.post('hardwaresets/checkout/' + id + "/" + request)
+          .then(response => console.log(response.data))
+          .catch((error) => {
+              console.log(error);
+          })
+      window.location.reload();
+    }
 
   handleChange = (e) => {
     this.setState({

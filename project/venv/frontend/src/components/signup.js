@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Form, Button} from "react-bootstrap";
-//import axios from 'axios'
+import axios from 'axios'
 
 class Signup extends Component {
   state = {
@@ -22,23 +22,19 @@ class Signup extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    // const user = {
-    //     isMentor: this.state.isMentor,
-    //     email: this.state.email,
-    //     password: this.state.password,
-    //     firstName: this.state.firstname,
-    //     lastName: this.state.lastname,
-    //     age: this.state.age
-    // }
+    const user = {
+        email: this.state.email,
+        password: this.state.password,
+    }
 
-    // axios.post("http://localhost:5000/auth/register", user)
-    //     .then(res => {
-    //         console.log(res.data);
-    //         window.location = "/";
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     })
+    axios.post("http://localhost:5000/register", user)
+        .then(res => {
+            console.log(res.data);
+            //window.location = "/";
+        })
+        .catch(err => {
+            console.log(err);
+        })
   };
 
   render() {

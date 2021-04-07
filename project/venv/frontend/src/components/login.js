@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Form, Button } from "react-bootstrap";
-//import axios from 'axios'
+import axios from 'axios';
 import { Link } from "react-router-dom";
 
 class Login extends Component {
@@ -18,18 +18,18 @@ class Login extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    // const user = {
-    //     email: this.state.email,
-    //     password: this.state.password,
-    // }
-    // axios.post("http://localhost:5000/auth/login", user)
-    //     .then(res => {
-    //         console.log(res.data);
-    //         //window.location = "/";
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     })
+    const user = {
+        email: this.state.email,
+        password: this.state.password,
+    }
+    axios.post("http://localhost:5000/auth/login", user)
+        .then(res => {
+            console.log(res.data);
+            window.location = "/";
+        })
+        .catch(err => {
+            console.log(err);
+        })
   };
 
   render() {

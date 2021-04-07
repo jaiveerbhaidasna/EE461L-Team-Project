@@ -1,4 +1,6 @@
 import functools
+from .__init__ import app
+from flask_cors import CORS, cross_origin
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -6,7 +8,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from backend.db import get_login_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-
 def encrypt(inputText):
 	N = 20
 	reversed = inputText[::-1]
@@ -37,27 +38,28 @@ def decrypt(inputText):
 		newList.append(chr(newAscii))
 	return "".join(newList)
 
-@bp.route('/register', methods=('GET', 'POST'))
+@app.route('/auth/register', methods=('GET', 'POST'))
+@cross_origin(supports_credentials=True)
 def register():
+    
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
         db = get_login_db()
         error = None
 
-        if not username:
-            error = 'Username is required.'
+        if not email:
+            error = 'email is required.'
         elif not password:
             error = 'Password is required.'
-
-        username_found = db.find_one({"username":encrypt(username)})
-        if username_found is not None:
-        	error = 'Username already taken'
+        email_found = db.find_one({"email":email})
+        if email_found is not None:
+        	error = 'email already taken'
 
         if error is None:
             entry = {
-            	"username" : encrypt(username),
-            	"password" : encrypt(password),
+            	"email" : (email),
+            	"password" : (password),
             	"projects" : []
             }
             e = db.insert_one(entry).inserted_id        
@@ -68,20 +70,20 @@ def register():
 
     return render_template('auth/register.html')
 
-@bp.route('/login', methods=('GET', 'POST'))
+@app.route('/auth/login', methods=('GET', 'POST'))
 def login():
     if (request.method == 'POST'):
-    	username = request.form['username']
-    	password = request.form['password']
+    	email = request.form.get('email')
+    	password = request.form.get('password')
     	db = get_login_db()
     	error = None
-    	encrypted_username = encrypt(username)
-    	username_found = db.find_one({"username":encrypted_username})
-    	password_found = db.find_one({"password":encrypt(password)})
-    	if (username_found is None or password_found is None):
-    		error = 'No matching username and password combination'
+    	#encrypted_username = encrypt(username)
+    	email_found = db.find_one({"email":email})
+    	password_found = db.find_one({"password":password})
+    	if (email_found is None or password_found is None):
+    		error = 'No matching email and password combination'
     	if (error is None):
-            session['username'] = encrypted_username
+            session['email'] = email
             return redirect(url_for('projects.projects'))
     	flash(error)
     return render_template('auth/login.html')
