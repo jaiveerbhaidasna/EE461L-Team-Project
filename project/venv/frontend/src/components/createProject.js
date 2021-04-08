@@ -7,8 +7,6 @@ class CreateProject extends Component {
     name: "",
     id: "",
     description: "",
-    capacity: 0,
-    availability: 0
   };
 
   handleChange = (e) => {
@@ -24,8 +22,6 @@ class CreateProject extends Component {
         name: this.state.email,
         id: this.state.password,
         description: this.state.description,
-        capacity: this.state.capacity,
-        availability: this.state.availability
     }
 
     axios.post("http://localhost:5000/projects/", project)
@@ -66,23 +62,7 @@ class CreateProject extends Component {
               name="id"
               onChange={this.handleChange}
             />
-          </Form.Group>
-          <Form.Group size="lg" controlId="capacity">
-            <Form.Label>Capacity</Form.Label>
-            <Form.Control
-              type="capacity"
-              name="capacity"
-              onChange={this.handleChange}
-            />
-          </Form.Group>
-          <Form.Group size="lg" controlId="availability">
-            <Form.Label>Availability</Form.Label>
-            <Form.Control
-              type="availability"
-              name="availability"
-              onChange={this.handleChange}
-            />
-          </Form.Group>
+          </Form.Group>         
           <Button block size="lg" type="submit">
             Create Project
           </Button>

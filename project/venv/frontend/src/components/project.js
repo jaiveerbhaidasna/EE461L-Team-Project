@@ -8,7 +8,7 @@ const HardwareSet = (props) => (
     <td>{props.hardwareset.name}</td>
     <td>{props.hardwareset.capacity}</td>
     <td>{props.hardwareset.availability}</td>
-    <td>{props.hardwareset.request}</td>
+    <td><input></input></td>
     <td>
       <input onChange={this.handleChange} ></input>
     </td>
@@ -20,6 +20,7 @@ const HardwareSet = (props) => (
     </td>
   </tr>
 );
+
 
 class Project extends Component {
   state = {
@@ -49,8 +50,14 @@ class Project extends Component {
       })
     }
 
-    checkin(id, request) {
-      axios.post('hardwaresets/checkin/' + id + "/" + request)
+    checkin(id1, request) {
+      
+      const requestinfo = {
+        id: id1,
+        request: this.state.request,
+      }
+
+      axios.post('hardwaresets/checkin/', requestinfo)
           .then(response => console.log(response.data))
           .catch((error) => {
               console.log(error);
@@ -58,8 +65,13 @@ class Project extends Component {
       window.location.reload();
     }
 
-    checkout(id, request) {
-      axios.post('hardwaresets/checkout/' + id + "/" + request)
+    checkout(id1, request) {
+      const requestinfo = {
+        id: id1,
+        request: this.state.request,
+      }
+
+      axios.post('hardwaresets/checkout/', requestinfo)
           .then(response => console.log(response.data))
           .catch((error) => {
               console.log(error);
