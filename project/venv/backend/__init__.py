@@ -222,7 +222,16 @@ def get_projects():
         all_projects = str(list(db.find({}))[0])
         splitlist = all_projects.split(',')
         splitlist.pop(0)
-        splitlist[0] = "{" + splitlist[0]
+        splitlist[-1] = splitlist[-1][:-1]
+
+        project_dict = {}
+        
+        for i in range(0,len(splitlist)):
+            element = splitlist[i]
+            colon_index = splitlist[i].index(':')
+            project_dict[element[:colon_index]] = element[colon_index + 1:]
+
+        output = json.dumps(project_dict)
         
         #print(all_projects)
         #projects = jsonify(all_projects)
