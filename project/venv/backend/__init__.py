@@ -220,13 +220,13 @@ def get_projects():
         db = get_project_db()
         error = None
         all_projects = str(list(db.find({}))[0])
-        print(all_projects)
-        splitlist = all_projects.split(',')
+        #print(all_projects)
+        h_index = all_projects.index('hardware sets')
+        lastitem = all_projects[h_index:-2]
+        all_projects = all_projects[:h_index]
+        splitlist = all_projects.split(', ')
         splitlist.pop(0)
-        splitlist[-1] = splitlist[-1][:-1]
-        lastitem = splitlist.pop()
         print(lastitem)
-
 
         project_dict = {}
         
