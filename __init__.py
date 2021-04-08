@@ -132,7 +132,7 @@ def projects():
         }
         hardware_set_1_id = hardware_set_db.insert_one(hardware_set_1_info).insertedId
         hardware_set_2_id = hardware_set_db.insert_one(hardware_set_2_info).insertedId
-
+        hardware_set_db = get_hardware_set_db()
         hardware_sets = [hardware_set_1_id, hardware_set_2_id]
 
 
@@ -213,10 +213,14 @@ def get_projects():
         # Case 1 
         db = get_project_db()
         error = None
-        all_projects = db.find({})
-        # Might need to convert to JSON
-        return all_projects
+        cursors = db.find({})
+        json_array = []
+        for doc in cursors:
+            json_project = json.dumps(doc)
+            json_array.append(json_project)
 
+
+        return json_array
     return 'Failure'
 
 @app.route('/<id>', methods=('GET','POST'))
