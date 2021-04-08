@@ -219,12 +219,15 @@ def get_projects():
         # Case 1 
         db = get_project_db()
         error = None
-        all_projects = list(db.find({}))
-        print(all_projects)
-        projects = str(all_projects)
-        print(projects)
+        all_projects = str(list(db.find({}))[0])
+        splitlist = all_projects.split(',')
+        splitlist.pop(0)
+        splitlist[0] = "{" + splitlist[0]
+        
+        #print(all_projects)
+        #projects = jsonify(all_projects)
         # Might need to convert to JSON
-        return projects
+        return "test"
 
     return 'Failure'
 
@@ -234,7 +237,7 @@ def get_single_project(id):
         print(id)
         #id = request.path
         db = get_project_db()
-        project = list(db.find({"_id":id}))
+        project = list(db.find({"id":id}))
         jsonproject = str(project)
         print(project)
         print(jsonproject)

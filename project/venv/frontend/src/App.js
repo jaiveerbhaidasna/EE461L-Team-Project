@@ -16,7 +16,7 @@ import Signup from "./components/signup";
 import Login from "./components/login";
 import Project from "./components/project";
 import Datasets from "./components/datasets";
-import CreateProject from "./components/createProject";
+import CreateProject from "./components/projects";
 
 
 class App extends Component{
@@ -62,7 +62,7 @@ class App extends Component{
             <Route path="/project">
               <Project />
             </Route>
-            <Route path="/createProject">
+            <Route path="/projects">
               <CreateProject />
             </Route>
             <Route path="/datasets">

@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from 'axios'
 
-class CreateProject extends Component {
+class Projects extends Component {
   state = {
     name: "",
     id: "",
@@ -72,4 +72,4 @@ class CreateProject extends Component {
   }
 }
 
-export default CreateProject;
+export default Projects;
