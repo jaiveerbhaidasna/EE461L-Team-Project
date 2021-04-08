@@ -29,6 +29,7 @@ class Home extends Component {
         .catch((error) => {
           console.log(error);
         })
+      console.log(this.state.projects)
     }
 
   fillTable() {
@@ -70,7 +71,7 @@ class Home extends Component {
               <th>Description</th>
               <td><Link style={{color:"Aqua"}} to="/project/1234">Log in</Link></td>
             </tr>
-            {/* { this.fillTable() } */}
+            { this.fillTable() }
           </tbody>
         </Table>
         <Link id="newproject" to="/createProject">Create New Project</Link>

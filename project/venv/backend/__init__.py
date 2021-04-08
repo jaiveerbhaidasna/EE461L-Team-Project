@@ -221,12 +221,14 @@ def get_projects():
         error = None
         all_projects = str(list(db.find({}))[0])
         #print(all_projects)
-        h_index = all_projects.index('hardware sets')
-        lastitem = all_projects[h_index:-2]
+        h_index = all_projects.index('\'hardware sets')
+        lastitem = all_projects[h_index:-1]
         all_projects = all_projects[:h_index]
-        splitlist = all_projects.split(', ')
+        splitlist = all_projects.split(',')
         splitlist.pop(0)
+        splitlist.pop()
         print(lastitem)
+        print(splitlist)
 
         project_dict = {}
         
@@ -238,12 +240,13 @@ def get_projects():
         colon_index = lastitem.index(':')
         project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
         output = json.dumps(project_dict)
-        print(output)
+        print(json.dumps(output))
+        
         
         #print(all_projects)
         #projects = jsonify(all_projects)
         # Might need to convert to JSON
-        return "test"
+        return output
 
     return 'Failure'
 
