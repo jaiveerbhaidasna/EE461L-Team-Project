@@ -107,13 +107,70 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/projects', methods=('GET', 'POST'))
+def projects():
+    # Give the user the option to create a new project or enter the
+    # project ID of an existing project
 
+    # 100 hardware set 1 capacity/available
+    # 100 hardware set 2
+
+    if request.method == 'POST':
+        dictionary = json.loads(json.dumps(request.json))
+        name = dictionary['name']
+        description = dictionary['description'] 
+        id = dictionary['id']
+        hardware_set_1_info = {
+            "name":"Hardware Set 1",
+            "capacity":100,
+            "available":100
+        }
+        hardware_set_2_info = {
+            "name":"Hardware Set 2",
+            "capacity":100,
+            "available":100
+        }
+        hardware_set_1_id = hardware_set_db.insert_one(hardware_set_1_info).insertedId
+        hardware_set_2_id = hardware_set_db.insert_one(hardware_set_2_info).insertedId
+
+        hardware_sets = [hardware_set_1_id, hardware_set_2_id]
+
+
+        login_db = get_login_db()
+        project_db = get_project_db()
+        error = None
+
+        if not name:
+            error = 'name is required'
+        if not description:
+            error = 'description is required'
+        if not id:
+            error = 'id is required'
+        id_input = project_db.find_one({"id": id})
+        if id_input is not None:
+            error = 'id is already taken'
+        if error is None:
+            #if existing_id is None:
+                # Create new project and add to database
+            project_info = {
+                "id":id,
+                "name":name,
+                "description": description,
+                "hardware sets":hardware_sets
+            }
+            project_db.insert_one(project_info)
+            #else:
+                # Load existing project from database
+        #flash(error)
+    return "hi"
+
+@app.route('/hardwaresets/checkin', methods=('GET','POST'))
 def check_in():
     if (request.method == 'POST'):
         dictionary = json.loads(json.dumps(request.json))
-        _id = dictionary['_id']
-        amount = dictionary['number']
-        db = get_project_db()
+        _id = dictionary['id']
+        amount = dictionary['request']
+        db = get_hardware_db()
         error = None
 
         name_found = db.find_one({"_id":_id})
@@ -124,17 +181,18 @@ def check_in():
         #name_found_capacity = name_found['capacity']
         
         if (error is None and name_found_available):
-            db.update_one({"_id":id}, {"$set": { 'available':  name_found_available + int(amount)}})
+            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available + int(amount)}})
             return 'Success'
 
     return 'Failure'
 
+@app.route('/hardwaresets/checkout', methods=('GET','POST'))
 def check_out():
     if (request.method == 'POST'):
         dictionary = json.loads(json.dumps(request.json))
-        _id = dictionary['_id']
-        amount = dictionary['number']
-        db = get_project_db()
+        _id = dictionary['id']
+        amount = dictionary['request']
+        db = get_hardware_db()
         error = None
 
         name_found = db.find_one({"_id":_id})
@@ -144,20 +202,33 @@ def check_out():
         name_found_available = name_found['available']
         
         if (error is None and name_found_available >= int(amount)):
-            db.update_one({"_id":id}, {"$set": { 'available':  name_found_available - int(amount)}})
+            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available - int(amount)}})
             return 'Success'
 
     return 'Failure'
-    
+
+@app.route('/', methods=('GET','POST'))    
 def get_projects():
     if (request.method == 'GET'):
-        dictionary = json.loads(json.dumps(request.json))
-        email = dictionary['email']
-        projectID = dictionary['project']
-        db = get_login_db()
+        # Case 1 
+        db = get_project_db()
         error = None
+        all_projects = db.find({})
+        # Might need to convert to JSON
+        return all_projects
 
     return 'Failure'
+
+@app.route('/<id>', methods=('GET','POST'))
+def get_single_project(id):
+    if(request.method == 'GET'):
+        db = get_project_db()
+        error = None
+        project = db.find(id)
+        return project
+    return "Failure"
+
+
 
 def get_login_db():
     g.db = client.db
@@ -168,5 +239,11 @@ def get_login_db():
 def get_project_db():
     g.db = client.db
     g.collection = g.db['projects']
+
+    return g.collection
+
+def get_hardware_set_db():
+    g.db = client.db
+    g.collection = g.db['hardware sets']
 
     return g.collection
