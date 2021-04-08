@@ -22,9 +22,9 @@ class Home extends Component {
   };
 
   componentDidMount() {
-      axios.get('/projects/')
+      axios.get('/')
         .then(response => {
-          this.setState({ projects: response.data })
+          this.setState({ projects: response.data });
         })
         .catch((error) => {
           console.log(error);
@@ -32,6 +32,7 @@ class Home extends Component {
     }
 
   fillTable() {
+    console.log(this.state.projects)
     return this.state.projects.map(currentproject => {
       return <Project project={currentproject} key={currentproject._id}/>;
     })

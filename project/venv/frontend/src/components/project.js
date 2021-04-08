@@ -30,19 +30,19 @@ class Project extends Component {
     request: 0,
   };
 
-    // componentDidMount() {
-    //   axios.get("/" + this.props.match.params.id)
-    //     .then((response) => {
-    //       this.setState({
-    //         name: response.data.name,
-    //         capacity: response.data.capacity,
-    //         availability: response.data.availability,
-    //       });
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // }
+    componentDidMount() {
+      axios.get("/" + this.props.match.params.id)
+        .then((response) => {
+          this.setState({
+            name: response.data.name,
+            capacity: response.data.capacity,
+            availability: response.data.availability,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
 
     fillTable() {
       return this.state.hardwaresets.map(currentset => {

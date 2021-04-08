@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
+from flask import jsonify
+from flask import request
 from pymongo import MongoClient
 import functools
 from flask_cors import CORS, cross_origin
@@ -8,6 +10,9 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
+import bson
+from bson.json_util import dumps
+from bson.json_util import loads
 
 client = MongoClient(
     "mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -19,17 +24,39 @@ def create_app():
     cors = CORS(app, support_credentials=True)
     app.config.from_mapping(SECRET_KEY='dev')
 
-    @app.route('/home')
-    def home():
-        return "Home Page"
-
     from . import db
-    # db.init_app(app)
-
-    #from . import auth, projects
 
     return app
 
+def encrypt(inputText):
+    N = 20
+    reversed = inputText[::-1]
+    reversedList = list(reversed)
+    newList = []
+    for element in reversedList:
+        newAscii = 0
+        newAscii = ord(element) + N
+        if newAscii > 126:
+            newAscii = newAscii - 93
+        if newAscii < 34:
+            newAscii = newAscii + 93
+        newList.append(chr(newAscii))
+    return "".join(newList)
+
+def decrypt(inputText):
+    N = 20
+    reversed = inputText[::-1]
+    reversedList = list(reversed)
+    newList = []
+    for element in reversedList:
+        newAscii = 0
+        newAscii = ord(element) - N
+        if newAscii > 126:
+            newAscii = newAscii - 93
+        if newAscii < 34:
+            newAscii = newAscii + 93
+        newList.append(chr(newAscii))
+    return "".join(newList)
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
@@ -37,31 +64,29 @@ def register():
         dictionary = json.loads(json.dumps(request.json))
         email = dictionary['email']
         password = dictionary['password']
-        #email = request.form['email']
-        #password = request.form['password']
-        print(email)
-        print(password)
         db = get_login_db()
         error = None
+        encrypted_email = encrypt(email)
+        encrypted_password = encrypt(password)
         if not email:
-            error = 'email is required.'
+            error = 'Email is required.'
         elif not password:
             error = 'Password is required.'
-        email_found = db.find_one({"email": email})
+        email_found = db.find_one({"email": encrypted_email})
         if email_found is not None:
-            error = 'email already taken'
+            error = 'Email already taken'
       
         if error is None:
             entry = {
-                "email": (email),
-                "password": (password),
+                "email": (encrypted_email),
+                "password": (encrypted_password),
                 "projects": []
             }
-            e = db.insert_one(entry).inserted_id
+            db.insert_one(entry)
 
             return redirect(url_for('login'))
-        #flash(error)
-    return "hi"
+        
+    return "This is being returned in place of a register HTML"
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
@@ -71,35 +96,51 @@ def login():
         password = dictionary['password']
         db = get_login_db()
         error = None
-        #encrypted_username = encrypt(username)
-        email_found = db.find_one({"email":email})
-        password_found = db.find_one({"password":password})
+        encrypted_email = encrypt(email)
+        encrypted_password = encrypt(password)
+        email_found = db.find_one({"email":encrypted_email})
+        password_found = db.find_one({"password":encrypted_password})
         if (email_found is None or password_found is None):
             error = 'No matching email and password combination'
         if (error is None):
-            session['email'] = email
+            session['email'] = encrypted_email
             return redirect(url_for('projects'))
-        #flash(error)
-    #return render_template('auth/login.html')
-    return("test")
+    return("This is being returned in place of a login HTML")
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('auth.login'))
-
+    return redirect(url_for('login'))
 
 @app.route('/projects', methods=('GET', 'POST'))
 def projects():
     # Give the user the option to create a new project or enter the
     # project ID of an existing project
+
+    # 100 hardware set 1 capacity/available
+    # 100 hardware set 2
+
     if request.method == 'POST':
         dictionary = json.loads(json.dumps(request.json))
+        hardware_set_db = get_hardware_set_db()
         name = dictionary['name']
-        description = dictionary['description']
-        capacity = dictionary['capacity']
-        availability = dictionary['availability']
+        description = dictionary['description'] 
         id = dictionary['id']
+        hardware_set_1_info = {
+            "name":"Hardware Set 1",
+            "capacity":100,
+            "available":100
+        }
+        hardware_set_2_info = {
+            "name":"Hardware Set 2",
+            "capacity":100,
+            "available":100
+        }
+        hardware_set_1_id = hardware_set_db.insert_one(hardware_set_1_info).inserted_id
+        hardware_set_2_id = hardware_set_db.insert_one(hardware_set_2_info).inserted_id
+
+        hardware_sets = [hardware_set_1_id, hardware_set_2_id]
+
 
         login_db = get_login_db()
         project_db = get_project_db()
@@ -111,10 +152,6 @@ def projects():
             error = 'description is required'
         if not id:
             error = 'id is required'
-        if not capacity:
-            error = 'capacity is required'
-        if not availability:
-            error = 'availability is required'
         id_input = project_db.find_one({"id": id})
         if id_input is not None:
             error = 'id is already taken'
@@ -125,14 +162,85 @@ def projects():
                 "id":id,
                 "name":name,
                 "description": description,
-                "capacity": capacity,
-                "availability": availability
+                "hardware sets":hardware_sets
             }
             project_db.insert_one(project_info)
             #else:
                 # Load existing project from database
         #flash(error)
     return "hi"
+
+@app.route('/hardwaresets/checkin', methods=('GET','POST'))
+def check_in():
+    if (request.method == 'POST'):
+        dictionary = json.loads(json.dumps(request.json))
+        _id = dictionary['id']
+        amount = dictionary['request']
+        db = get_hardware_db()
+        error = None
+
+        name_found = db.find_one({"_id":_id})
+        if (name_found is None):
+            error = 'No matching Hardware Set with given name'
+
+        name_found_available = name_found['available']
+        #name_found_capacity = name_found['capacity']
+        
+        if (error is None and name_found_available):
+            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available + int(amount)}})
+            return 'Success'
+
+    return 'Failure'
+
+@app.route('/hardwaresets/checkout', methods=('GET','POST'))
+def check_out():
+    if (request.method == 'POST'):
+        dictionary = json.loads(json.dumps(request.json))
+        _id = dictionary['id']
+        amount = dictionary['request']
+        db = get_hardware_db()
+        error = None
+
+        name_found = db.find_one({"_id":_id})
+        if (name_found is None):
+            error = 'No matching Hardware Set with given name'
+
+        name_found_available = name_found['available']
+        
+        if (error is None and name_found_available >= int(amount)):
+            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available - int(amount)}})
+            return 'Success'
+
+    return 'Failure'
+
+@app.route('/', methods=('GET','POST'))    
+def get_projects():
+    if (request.method == 'GET'):
+        # Case 1 
+        db = get_project_db()
+        error = None
+        all_projects = list(db.find({}))
+        print(all_projects)
+        projects = str(all_projects)
+        print(projects)
+        # Might need to convert to JSON
+        return projects
+
+    return 'Failure'
+
+@app.route('/<id>', methods=('GET','POST'))
+def get_single_project(id):
+    if(request.method == 'GET'):
+        print(id)
+        #id = request.path
+        db = get_project_db()
+        project = list(db.find({"_id":id}))
+        jsonproject = str(project)
+        print(project)
+        print(jsonproject)
+        return jsonproject
+    return "Failure"
+
 
 
 def get_login_db():
@@ -144,5 +252,11 @@ def get_login_db():
 def get_project_db():
     g.db = client.db
     g.collection = g.db['projects']
+
+    return g.collection
+
+def get_hardware_set_db():
+    g.db = client.db
+    g.collection = g.db['hardware sets']
 
     return g.collection
