@@ -10,9 +10,8 @@ const HardwareSet = (props) => (
     <td>{props.hardwareset.available}</td>
     <td>
       <Button
-        href="."
         onClick={() => {
-          props.checkin(props.hardwareset.name);
+          props.checkin(props.request, props.hardwareset.name);
         }}
       >
         Check in
@@ -20,9 +19,8 @@ const HardwareSet = (props) => (
     </td>
     <td>
       <Button
-        href="."
         onClick={() => {
-          props.checkout(props.hardwareset.name);
+          props.checkout(props.request, props.hardwareset.name);
         }}
       >
         Check out
@@ -102,16 +100,17 @@ class Project extends Component {
           checkin={this.checkin}
           checkout={this.checkout}
           key={currentset._id}
+          request = {this.state.request}
         />
       );
     });
   }
 
-  checkin(name1) {
-    console.log(this.state.request)
+  checkin(num, name1) {
+    console.log(num)
     const requestinfo = {
       name: name1,
-      request: this.state.request,
+      request: num,
     };
 
     axios
@@ -120,13 +119,13 @@ class Project extends Component {
       .catch((error) => {
         console.log(error);
       });
-    window.location.reload();
+    //window.location.reload();
   }
 
-  checkout(name1) {
+  checkout(num, name1) {
     const requestinfo = {
       name: name1,
-      request: this.state.request,
+      request: num,
     };
 
     axios
@@ -135,7 +134,7 @@ class Project extends Component {
       .catch((error) => {
         console.log(error);
       });
-    window.location.reload();
+    //window.location.reload();
   }
 
   handleChange = (e) => {

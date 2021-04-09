@@ -19,11 +19,12 @@ client = MongoClient(
     "mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
 app = Flask(__name__)
+app.config.from_mapping(SECRET_KEY='dev')
+
 
 
 def create_app():
     cors = CORS(app, support_credentials=True)
-    app.config.from_mapping(SECRET_KEY='dev')
 
     from . import db
 
@@ -195,7 +196,7 @@ def check_in():
 
         # Search for the project in the database
         project_db = get_project_db()
-        project_data = project_db.find_one({"id":project_id})
+        project_data = project_db.find_one({"id":int(project_id)})
 
         # Try to get the project's corresponding hardware sets
         hardware_db = get_hardware_set_db()
@@ -218,12 +219,13 @@ def check_in():
         #name_found_capacity = name_found['capacity']
         
         if (error is None):
-            db.update_one({"_id":_id}, {"$set": { 'available':  current_available + int(amount)}})
+            hardware_db.update_one({"_id":hardware_object_id}, {"$set": { 'available':  current_available + int(amount)}})
             return 'Success'
 
     return error
 
 @app.route('/project/checkout', methods=('GET','POST'))
+@cross_origin()
 def check_out():
     # Given the name of the hardware set, and the amount requested to check out
     if (request.method == 'POST'):
@@ -237,7 +239,7 @@ def check_out():
 
         # Search for the project in the database
         project_db = get_project_db()
-        project_data = project_db.find_one({"id":project_id})
+        project_data = project_db.find_one({"id":int(project_id)})
 
         # Try to get the project's corresponding hardware sets
         hardware_db = get_hardware_set_db()
@@ -260,7 +262,7 @@ def check_out():
         #name_found_capacity = name_found['capacity']
         
         if (error is None):
-            db.update_one({"_id":_id}, {"$set": { 'available':  current_available - int(amount)}})
+            hardware_db.update_one({"_id":hardware_object_id}, {"$set": { 'available':  current_available - int(amount)}})
             return 'Success'
 
     return error
