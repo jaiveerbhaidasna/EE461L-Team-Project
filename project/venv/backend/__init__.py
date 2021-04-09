@@ -318,6 +318,8 @@ def get_single_project(id):
         hardware_set_2_data = hardware_set_2_data[name_index2:]
         
 
+        # '{name: 'data', capacity: 100, available: 100}'
+
         h1_data = '\"{'
         quote_count = 0
         for ch in hardware_set_1_data:
@@ -336,6 +338,11 @@ def get_single_project(id):
 
         h1_data = h1_data[:-1] + '\"'
         h2_data = h2_data[:-1] + '\"'
+
+        cap_index = h1_data.index('capacity: ')
+        avail_index = h1_data.index('available: ')
+        close_index = h1_data.index('}')
+        h1_data = h1_data[:cap_index+11] + '\'' + h1_data[cap_index+11:avail_index-2] + '\'' + h1_data[avail_index+12:close_index] + '\'' + h1_data[close_index:]
 
 
         output.append(h1_data)
