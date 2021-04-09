@@ -342,7 +342,13 @@ def get_single_project(id):
         cap_index = h1_data.index('capacity: ')
         avail_index = h1_data.index('available: ')
         close_index = h1_data.index('}')
-        h1_data = h1_data[:cap_index+11] + '\'' + h1_data[cap_index+11:avail_index-2] + '\'' + h1_data[avail_index+12:close_index] + '\'' + h1_data[close_index:]
+
+        cap_index2 = h2_data.index('capacity: ')
+        avail_index2 = h2_data.index('available: ')
+        close_index2 = h2_data.index('}')
+
+        h1_data = h1_data[:cap_index+10] + '\'' + h1_data[cap_index+10:avail_index-2] + '\'' + h1_data[avail_index-2:avail_index+11]  + '\'' +  h1_data[avail_index+11:close_index] + '\'' + h1_data[close_index:]
+        h2_data = h2_data[:cap_index2+10] + '\'' + h2_data[cap_index2+10:avail_index2-2] + '\'' + h2_data[avail_index2-2:avail_index2+11]  + '\'' +  h2_data[avail_index2+11:close_index2] + '\'' + h2_data[close_index2:]
 
 
         output.append(h1_data)

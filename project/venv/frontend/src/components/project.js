@@ -33,19 +33,8 @@ const HardwareSet = (props) => (
 
 class Project extends Component {
   state = {
-    hardwaresets: [
-      // {
-      //   name: 'Hardware Set 1',
-      //   capacity: 100,
-      //   available: 100
-      // },
-      // {
-      //   name: 'Hardware Set 2',
-      //   capacity: 100,
-      //   available: 100
-      // }
-    ],
-    requests: 0,
+    hardwaresets:[],
+    request: 0,
   };
 
   componentDidMount() {
@@ -63,7 +52,9 @@ class Project extends Component {
 
         for(i; i<response.data.length; i++){
           console.log(response.data[i])
-          var mystring = ""
+          var setname = ""
+          var setcapacity = ""
+          var setavailable = ""
           var str = response.data[i]
           var flag = 0
           for(var j=0; j<str.length; j++){
@@ -71,17 +62,27 @@ class Project extends Component {
               flag++
             }
             if(flag === 1){
-              mystring += str.charAt(j)
+              setname += str.charAt(j)
+            }
+            if(flag === 3){
+              setcapacity += str.charAt(j)
+            }
+            if(flag === 5){
+              setavailable += str.charAt(j)
             }
           }
-          mystring += "\'"
-           const hwset = {
-             name:mystring,
-             capacity:0,
-             available:0
+          setname = setname.substring(1)
+          setcapacity = setcapacity.substring(1)
+          setavailable = setavailable.substring(1)
+          
+          console.log(parseInt(setcapacity))
+
+          const hwset = {
+             name:setname,
+             capacity:(setcapacity),
+             available:(setavailable)
            }
           data.push(hwset)
-          console.log(mystring)
 
         }
         this.setState({
@@ -107,13 +108,14 @@ class Project extends Component {
   }
 
   checkin(name1) {
+    console.log(this.state.request)
     const requestinfo = {
       name: name1,
       request: this.state.request,
     };
 
     axios
-      .post("http://localhost:5000/project/checkin/", requestinfo)
+      .post("http://localhost:5000/project/checkin", requestinfo)
       .then((response) => console.log(response.data))
       .catch((error) => {
         console.log(error);
@@ -128,7 +130,7 @@ class Project extends Component {
     };
 
     axios
-      .post("http://localhost:5000/project/checkout/", requestinfo)
+      .post("http://localhost:5000/project/checkout", requestinfo)
       .then((response) => console.log(response.data))
       .catch((error) => {
         console.log(error);
