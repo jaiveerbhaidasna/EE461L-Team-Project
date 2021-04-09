@@ -6,11 +6,11 @@ import axios from 'axios'
 
 const Project = (props) => (
   <tr>
-    <td>{props.projects.name}</td>
-    <td>{props.projects.id}</td>
-    <td>{props.projects.description}</td>
+    <td>{props.project.name}</td>
+    <td>{props.project.id}</td>
+    <td>{props.project.description}</td>
     <td>
-      <Link style={{color:"Aqua"}} to={"/projects/"+props.projects._id}>Log in</Link>
+      <Link style={{color:"Aqua"}} to={"/project/"+props.project.id}>Log in</Link>
     </td>
   </tr>
 );
@@ -18,26 +18,32 @@ const Project = (props) => (
 class Home extends Component {
 
   state = {
-    projects: []
+    projects: [],
+    projectid: ""
   };
 
   componentDidMount() {
-      axios.get('/')
-        .then(response => {
-          this.setState({ projects: response.data });
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      console.log(this.state.projects)
+      // axios.get('http://localhost:5000/')
+      //   .then(response => {
+      //     this.setState({ projects: response.data });
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   })
     }
 
   fillTable() {
-    console.log(this.state.projects)
     return this.state.projects.map(currentproject => {
       return <Project project={currentproject} key={currentproject._id}/>;
     })
   }  
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+    console.log(e.target)
+  };
 
   render() {
     return (
@@ -53,28 +59,12 @@ class Home extends Component {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Project 1</td>
-              <td>111</td>
-              <th>Description</th>
-              <td><Link  style={{color:"Aqua"}} to="/project">Log in</Link></td>
-            </tr>
-            <tr>
-              <td>Project 2</td>
-              <td>222</td>
-              <th>Description</th>
-              <td><Link  style={{color:"Aqua"}} to="/project">Log in</Link></td>
-            </tr>
-            <tr>
-              <td >Project3</td>
-              <td>333</td>
-              <th>Description</th>
-              <td><Link style={{color:"Aqua"}} to="/project/1234">Log in</Link></td>
-            </tr>
-            { this.fillTable() }
+            {/* { this.fillTable() } */}
           </tbody>
         </Table>
-        <Link id="newproject" to="/createProject">Create New Project</Link>
+        <Link id="newproject" to="/projects">Create New Project</Link>
+        <input type="text" name="projectid" onChange={this.handleChange}></input>
+        <Link style={{color:"Aqua"}} to={"/project/"+this.state.projectid}>Log in</Link>
       </div>
     );
   }

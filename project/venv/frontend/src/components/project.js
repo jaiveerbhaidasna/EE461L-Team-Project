@@ -31,7 +31,11 @@ class Project extends Component {
   };
 
     componentDidMount() {
-      axios.get("/" + this.props.match.params.id)
+      var url = window.location.pathname.substring(window.location.pathname.lastIndexOf('/' + 1))
+      url = url.substring(1)
+      console.log(url)
+      
+      axios.get("http://localhost:5000/" + url)
         .then((response) => {
           this.setState({
             name: response.data.name,
@@ -50,14 +54,14 @@ class Project extends Component {
       })
     }
 
-    checkin(id1, request) {
+    checkin() {
       
       const requestinfo = {
-        id: id1,
+        name: this.state.name,
         request: this.state.request,
       }
 
-      axios.post('hardwaresets/checkin/', requestinfo)
+      axios.post('http://localhost:5000/project/checkin/', requestinfo)
           .then(response => console.log(response.data))
           .catch((error) => {
               console.log(error);
@@ -65,13 +69,13 @@ class Project extends Component {
       window.location.reload();
     }
 
-    checkout(id1, request) {
+    checkout() {
       const requestinfo = {
-        id: id1,
+        name: this.state.name,
         request: this.state.request,
       }
 
-      axios.post('hardwaresets/checkout/', requestinfo)
+      axios.post('project/checkout/', requestinfo)
           .then(response => console.log(response.data))
           .catch((error) => {
               console.log(error);

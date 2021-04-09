@@ -203,7 +203,7 @@ def check_in():
         hardware_array = project_data['hardware sets']
         if name == "Hardware Set 1":
             hardware_object_id = hardware_array[0]
-        else if name == "Hardware Set 2":
+        elif name == "Hardware Set 2":
             hardware_object_id = hardware_array[1]
 
         error = None
@@ -245,7 +245,7 @@ def check_out():
         hardware_array = project_data['hardware sets']
         if name == "Hardware Set 1":
             hardware_object_id = hardware_array[0]
-        else if name == "Hardware Set 2":
+        elif name == "Hardware Set 2":
             hardware_object_id = hardware_array[1]
 
         error = None
@@ -303,7 +303,8 @@ def get_single_project(id):
         print(id)
         #id = request.path
         db = get_project_db()
-        project = str(list(db.find({"id":id})))
+        project = str(list(db.find({"id":int(id)})))
+        print(project)
         h_index = project.index('\'hardware sets')
         lastitem = project[h_index:-1]
         project = project[:h_index]
@@ -318,7 +319,7 @@ def get_single_project(id):
             project_dict[element[:colon_index]] = element[colon_index + 1:]
             colon_index = lastitem.index(':')
             project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
-            output.append(json.dumps(project_dict))
+        return json.dumps(project_dict)
     return "Failed to get a project"
 
 

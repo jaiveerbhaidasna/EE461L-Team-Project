@@ -19,12 +19,12 @@ class Projects extends Component {
     e.preventDefault();
 
     const project = {
-        name: this.state.email,
-        id: this.state.password,
+        name: this.state.name,
+        id: this.state.id,
         description: this.state.description,
     }
 
-    axios.post("http://localhost:5000/projects/", project)
+    axios.post("http://localhost:5000/projects", project)
         .then(res => {
             console.log(res.data);
             window.location = "/";
