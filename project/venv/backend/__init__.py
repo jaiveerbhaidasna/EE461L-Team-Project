@@ -319,14 +319,20 @@ def get_single_project(id):
         
 
         h1_data = '[{'
+        quote_count = 0
         for ch in hardware_set_1_data:
-            if ch != '\'':
+            if ch != '\'' or quote_count == 2 or quote_count == 3:
                 h1_data+= ch
+            if ch == '\'':
+                quote_count+=1
 
         h2_data = '[{'
+        quote_count = 0
         for ch in hardware_set_2_data:
-            if ch != '\'':
+            if ch != '\'' or quote_count == 2 or quote_count == 3:
                 h2_data+= ch
+            if ch == '\'':
+                quote_count+=1
 
         output.append(h1_data)
         output.append(h2_data)
