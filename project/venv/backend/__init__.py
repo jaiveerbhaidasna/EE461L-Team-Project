@@ -310,12 +310,28 @@ def get_single_project(id):
         hardware_id_2 = hardware_set_array[1] 
         print(hardware_set_array[0])  
         hardware_set_1_data = str(list(hardware_db.find({"_id":hardware_id_1})))        
-        hardware_set_2_data = str(list(hardware_db.find({"_id":hardware_id_2})))    
-        output.append(hardware_set_1_data)
-        output.append(hardware_set_2_data)
+        hardware_set_2_data = str(list(hardware_db.find({"_id":hardware_id_2})))
 
-        print(hardware_set_1_data)    
-        print(hardware_set_2_data)    
+        name_index1 = hardware_set_1_data.index('\'name');
+        name_index2 = hardware_set_2_data.index('\'name');
+        hardware_set_1_data = hardware_set_1_data[name_index1:]
+        hardware_set_2_data = hardware_set_2_data[name_index2:]
+
+        h1_data = '[{'
+        for ch in hardware_set_1_data:
+            if ch != '\'':
+                h1_data+= ch
+
+        h2_data = '[{'
+        for ch in hardware_set_2_data:
+            if ch != '\'':
+                h2_data+= ch
+
+        output.append(h1_data)
+        output.append(h2_data)
+
+        print(h1_data)    
+        print(h2_data)    
         return json.dumps(output)
 
 
