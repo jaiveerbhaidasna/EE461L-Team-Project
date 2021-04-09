@@ -13,6 +13,7 @@ import json
 import bson
 from bson.json_util import dumps
 from bson.json_util import loads
+from bson.objectid import ObjectId
 
 client = MongoClient(
     "mongodb+srv://ADMIN:GROUP15@cluster.jeu90.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -300,27 +301,26 @@ def get_projects():
 @app.route('/<id>', methods=('GET','POST'))
 def get_single_project(id):
     if(request.method == 'GET'):
-        print(id)
-        #id = request.path
-        db = get_project_db()
-        project = str(list(db.find({"id":int(id)})))
-        print(project)
-        h_index = project.index('\'hardware sets')
-        lastitem = project[h_index:-1]
-        project = project[:h_index]
-        splitlist = project.split(', ')
-        splitlist.pop(0)
-        splitlist.pop()
-        project_dict = {}
-        for i in range(0,len(splitlist)):
-            element = splitlist[i]
-            colon_index = element.index(':')
-            #print(element.index(':'))
-            project_dict[element[:colon_index]] = element[colon_index + 1:]
-            colon_index = lastitem.index(':')
-            project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
-        return json.dumps(project_dict)
-    return "Failed to get a project"
+        project_db = get_project_db()
+        hardware_db = get_hardware_set_db()
+        output = []             
+        project_data = project_db.find_one({"id":int(id)})
+        hardware_set_array = project_data['hardware sets']
+        hardware_id_1 = hardware_set_array[0]  
+        hardware_id_2 = hardware_set_array[1] 
+        print(hardware_set_array[0])  
+        hardware_set_1_data = str(list(hardware_db.find({"_id":hardware_id_1})))        
+        hardware_set_2_data = str(list(hardware_db.find({"_id":hardware_id_2})))    
+        output.append(hardware_set_1_data)
+        output.append(hardware_set_2_data)
+
+        print(hardware_set_1_data)    
+        print(hardware_set_2_data)    
+        return json.dumps(output)
+
+
+                   
+
 
 
 

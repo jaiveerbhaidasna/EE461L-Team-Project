@@ -7,9 +7,9 @@ const HardwareSet = (props) => (
   <tr>
     <td>{props.hardwareset.name}</td>
     <td>{props.hardwareset.capacity}</td>
-    <td>{props.hardwareset.availability}</td>
-    <td><input></input></td>
-    <td>
+    <td>{props.hardwareset.available}</td>
+    {/* <td><input type="number" name="request"></input></td> */}
+    {/* <td>
       <input onChange={this.handleChange} ></input>
     </td>
     <td>
@@ -17,17 +17,14 @@ const HardwareSet = (props) => (
     </td>
     <td>
       <Button href="." onClick={() => { props.checkout(props.hardwareset._id, this.state.request) }}>Check out</Button>
-    </td>
+    </td> */}
   </tr>
 );
 
 
 class Project extends Component {
   state = {
-    name: "Project x",
-    capacity: 0,
-    availability: 0,
-    request: 0,
+    hardwaresets:[]
   };
 
     componentDidMount() {
@@ -38,9 +35,7 @@ class Project extends Component {
       axios.get("http://localhost:5000/" + url)
         .then((response) => {
           this.setState({
-            name: response.data.name,
-            capacity: response.data.capacity,
-            availability: response.data.availability,
+            hardwaresets: response.data
           });
         })
         .catch((error) => {
@@ -49,6 +44,7 @@ class Project extends Component {
     }
 
     fillTable() {
+      console.log(this.state.hardwaresets)
       return this.state.hardwaresets.map(currentset => {
         return <HardwareSet hardwareset={currentset} checkin={this.checkin} checkout={this.checkout} key={currentset._id}/>;
       })
@@ -146,7 +142,7 @@ class Project extends Component {
               </td>
             </tr>
 
-            {/* { this.fillTable() } */}
+            { this.fillTable() }
           </tbody>
         </Table>
         <Link id="newproject" to="..">Log out of project</Link>
