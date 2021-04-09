@@ -312,10 +312,11 @@ def get_single_project(id):
         hardware_set_1_data = str(list(hardware_db.find({"_id":hardware_id_1})))        
         hardware_set_2_data = str(list(hardware_db.find({"_id":hardware_id_2})))
 
-        name_index1 = hardware_set_1_data.index('\'name');
-        name_index2 = hardware_set_2_data.index('\'name');
+        name_index1 = hardware_set_1_data.index('\'name')
+        name_index2 = hardware_set_2_data.index('\'name')
         hardware_set_1_data = hardware_set_1_data[name_index1:]
         hardware_set_2_data = hardware_set_2_data[name_index2:]
+        
 
         h1_data = '[{'
         for ch in hardware_set_1_data:

@@ -8,23 +8,20 @@ const HardwareSet = (props) => (
     <td>{props.hardwareset.name}</td>
     <td>{props.hardwareset.capacity}</td>
     <td>{props.hardwareset.available}</td>
-    {/* <td><input type="number" name="request"></input></td> */}
-    {/* <td>
-      <input onChange={this.handleChange} ></input>
+    <td>
+      <Button href="." onClick={() => { props.checkin(props.hardwareset.name) }}>Check in</Button>
     </td>
     <td>
-      <Button href="." onClick={() => { props.checkin(props.hardwareset._id, this.state.request) }}>Check in</Button>
+      <Button href="." onClick={() => { props.checkout(props.hardwareset.name) }}>Check out</Button>
     </td>
-    <td>
-      <Button href="." onClick={() => { props.checkout(props.hardwareset._id, this.state.request) }}>Check out</Button>
-    </td> */}
   </tr>
 );
 
 
 class Project extends Component {
   state = {
-    hardwaresets:[]
+    hardwaresets:[],
+    requests:0
   };
 
     componentDidMount() {
@@ -50,10 +47,10 @@ class Project extends Component {
       })
     }
 
-    checkin() {
+    checkin(name1) {
       
       const requestinfo = {
-        name: this.state.name,
+        name: name1,
         request: this.state.request,
       }
 
@@ -65,13 +62,13 @@ class Project extends Component {
       window.location.reload();
     }
 
-    checkout() {
+    checkout(name1) {
       const requestinfo = {
-        name: this.state.name,
+        name: name1,
         request: this.state.request,
       }
 
-      axios.post('project/checkout/', requestinfo)
+      axios.post('http://localhost:5000/project/checkout/', requestinfo)
           .then(response => console.log(response.data))
           .catch((error) => {
               console.log(error);
@@ -95,53 +92,10 @@ class Project extends Component {
               <th>Hardware Set Name</th>
               <th>Capacity</th>
               <th>Available</th>
-              <th>Request</th>
+              <th><input type="number" name="request" placeholder="Number" onChange={this.handleChange}></input></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Set 1</td>
-              <td>100</td>
-              <td>100</td>
-              <td>
-                <input></input>
-              </td>
-              <td>
-                <Button>Check in</Button>
-              </td>
-              <td>
-                <Button>Check out</Button>
-              </td>
-            </tr>
-            <tr>
-              <td>Set 2</td>
-              <td>100</td>
-              <td>100</td>
-              <td>
-                <input></input>
-              </td>
-              <td>
-                <Button>Check in</Button>
-              </td>
-              <td>
-                <Button>Check out</Button>
-              </td>
-            </tr>
-            <tr>
-              <td>Set 3</td>
-              <td>100</td>
-              <td>100</td>
-              <td>
-                <input name="request" onChange={this.handleChange}></input>
-              </td>
-              <td>
-                <Button>Check in</Button>
-              </td>
-              <td>
-                <Button>Check out</Button>
-              </td>
-            </tr>
-
             { this.fillTable() }
           </tbody>
         </Table>
