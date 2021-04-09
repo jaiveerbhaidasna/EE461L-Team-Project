@@ -301,6 +301,7 @@ def get_projects():
 @app.route('/<id>', methods=('GET','POST'))
 def get_single_project(id):
     if(request.method == 'GET'):
+        session['project id'] = id
         project_db = get_project_db()
         hardware_db = get_hardware_set_db()
         output = []             
