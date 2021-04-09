@@ -104,7 +104,7 @@ def login():
             error = 'No matching email and password combination'
         if (error is None):
             session['email'] = encrypted_email
-            return redirect(url_for('projects'))
+            return redirect(url_for('get_projects'))
     return("This is being returned in place of a login HTML")
 
 @app.route('/logout')
@@ -112,13 +112,24 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+"""@app.route('/', methods=('GET','POST'))
+def load_project():
+    if(request.method == 'POST'):
+        dictionary = json.loads(json.dumps(request.json))
+        project_id = dictionary['id']
+        db = get_project_db
+        error = None
+        project_found = db.find_one({"id":project_id})
+        if project_found is not None:
+            # Load project
+            session['project id'] = project_id
+            #return redirect(url_for('check_in'))
+    return "Failed to load project"
+"""
+
 @app.route('/projects', methods=('GET', 'POST'))
 def projects():
-    # Give the user the option to create a new project or enter the
-    # project ID of an existing project
-
-    # 100 hardware set 1 capacity/available
-    # 100 hardware set 2
+    # Give the user the option to create a new project
 
     if request.method == 'POST':
         dictionary = json.loads(json.dumps(request.json))
@@ -165,53 +176,93 @@ def projects():
                 "hardware sets":hardware_sets
             }
             project_db.insert_one(project_info)
-            #else:
-                # Load existing project from database
-        #flash(error)
-    return "hi"
+            #return redirect(url_for('workspace'))
+            
+    return "Failed to create a new project"
 
-@app.route('/hardwaresets/checkin', methods=('GET','POST'))
+@app.route('/project/checkin', methods=('GET','POST'))
 def check_in():
+    # Given the name of the hardware set, and the amount requested to check in
     if (request.method == 'POST'):
+        # Parse the input
         dictionary = json.loads(json.dumps(request.json))
-        _id = dictionary['id']
+        name = dictionary['name']
         amount = dictionary['request']
-        db = get_hardware_db()
+
+        # Get the current project id from session
+        project_id = session['project id']
+
+        # Search for the project in the database
+        project_db = get_project_db()
+        project_data = project_db.find_one({"id":project_id})
+
+        # Try to get the project's corresponding hardware sets
+        hardware_db = get_hardware_set_db()
+        hardware_object_id = None
+        # Get the wanted hardware set's MongoDB Object ID
+        hardware_array = project_data['hardware sets']
+        if name == "Hardware Set 1":
+            hardware_object_id = hardware_array[0]
+        else if name == "Hardware Set 2":
+            hardware_object_id = hardware_array[1]
+
         error = None
 
-        name_found = db.find_one({"_id":_id})
-        if (name_found is None):
-            error = 'No matching Hardware Set with given name'
+        # Try to find the hardware set in the database
+        hardware_set = hardware_db.find_one({"_id":hardware_object_id})
+        if (hardware_set is None):
+            error = 'No matching Hardware Set with given ID'
 
-        name_found_available = name_found['available']
+        current_available = hardware_set['available']
         #name_found_capacity = name_found['capacity']
         
-        if (error is None and name_found_available):
-            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available + int(amount)}})
+        if (error is None):
+            db.update_one({"_id":_id}, {"$set": { 'available':  current_available + int(amount)}})
             return 'Success'
 
-    return 'Failure'
+    return error
 
-@app.route('/hardwaresets/checkout', methods=('GET','POST'))
+@app.route('/project/checkout', methods=('GET','POST'))
 def check_out():
+    # Given the name of the hardware set, and the amount requested to check out
     if (request.method == 'POST'):
+        # Parse the input
         dictionary = json.loads(json.dumps(request.json))
-        _id = dictionary['id']
+        name = dictionary['name']
         amount = dictionary['request']
-        db = get_hardware_db()
+
+        # Get the current project id from session
+        project_id = session['project id']
+
+        # Search for the project in the database
+        project_db = get_project_db()
+        project_data = project_db.find_one({"id":project_id})
+
+        # Try to get the project's corresponding hardware sets
+        hardware_db = get_hardware_set_db()
+        hardware_object_id = None
+        # Get the wanted hardware set's MongoDB Object ID
+        hardware_array = project_data['hardware sets']
+        if name == "Hardware Set 1":
+            hardware_object_id = hardware_array[0]
+        else if name == "Hardware Set 2":
+            hardware_object_id = hardware_array[1]
+
         error = None
 
-        name_found = db.find_one({"_id":_id})
-        if (name_found is None):
-            error = 'No matching Hardware Set with given name'
+        # Try to find the hardware set in the database
+        hardware_set = hardware_db.find_one({"_id":hardware_object_id})
+        if (hardware_set is None):
+            error = 'No matching Hardware Set with given ID'
 
-        name_found_available = name_found['available']
+        current_available = hardware_set['available']
+        #name_found_capacity = name_found['capacity']
         
-        if (error is None and name_found_available >= int(amount)):
-            db.update_one({"_id":_id}, {"$set": { 'available':  name_found_available - int(amount)}})
+        if (error is None):
+            db.update_one({"_id":_id}, {"$set": { 'available':  current_available - int(amount)}})
             return 'Success'
 
-    return 'Failure'
+    return error
 
 @app.route('/', methods=('GET','POST'))    
 def get_projects():
@@ -219,36 +270,32 @@ def get_projects():
         # Case 1 
         db = get_project_db()
         error = None
-        all_projects = str(list(db.find({}))[0])
-        #print(all_projects)
-        h_index = all_projects.index('\'hardware sets')
-        lastitem = all_projects[h_index:-1]
-        all_projects = all_projects[:h_index]
-        splitlist = all_projects.split(',')
-        splitlist.pop(0)
-        splitlist.pop()
-        print(lastitem)
-        print(splitlist)
-
-        project_dict = {}
+        projects = str(list(db.find({})))
+        output = []
+        for p in projects:
+            all_projects = str(list(p))
+            h_index = all_projects.index('\'hardware sets')
+            lastitem = all_projects[h_index:-1]
+            all_projects = all_projects[:h_index]
+            splitlist = all_projects.split(', ')
+            splitlist.pop(0)
+            splitlist.pop()
+            #print(lastitem)
+            #print(splitlist)
+            project_dict = {}
+            for i in range(0,len(splitlist)):
+                element = splitlist[i]
+                colon_index = element.index(':')
+                print(element.index(':'))
+                project_dict[element[:colon_index]] = element[colon_index + 1:]
+            colon_index = lastitem.index(':')
+            project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
+            output.append(json.dumps(project_dict))
+            #print(json.dumps(output))
         
-        for i in range(0,len(splitlist)):
-            element = splitlist[i]
-            colon_index = element.index(':')
-            print(element.index(':'))
-            project_dict[element[:colon_index]] = element[colon_index + 1:]
-        colon_index = lastitem.index(':')
-        project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
-        output = json.dumps(project_dict)
-        print(json.dumps(output))
-        
-        
-        #print(all_projects)
-        #projects = jsonify(all_projects)
-        # Might need to convert to JSON
         return output
 
-    return 'Failure'
+    return 'Failed to get projects'
 
 @app.route('/<id>', methods=('GET','POST'))
 def get_single_project(id):
@@ -256,12 +303,23 @@ def get_single_project(id):
         print(id)
         #id = request.path
         db = get_project_db()
-        project = list(db.find({"id":id}))
-        jsonproject = str(project)
-        print(project)
-        print(jsonproject)
-        return jsonproject
-    return "Failure"
+        project = str(list(db.find({"id":id})))
+        h_index = project.index('\'hardware sets')
+        lastitem = project[h_index:-1]
+        project = project[:h_index]
+        splitlist = project.split(', ')
+        splitlist.pop(0)
+        splitlist.pop()
+        project_dict = {}
+        for i in range(0,len(splitlist)):
+            element = splitlist[i]
+            colon_index = element.index(':')
+            #print(element.index(':'))
+            project_dict[element[:colon_index]] = element[colon_index + 1:]
+            colon_index = lastitem.index(':')
+            project_dict[lastitem[:colon_index]] = lastitem[colon_index + 1:]
+            output.append(json.dumps(project_dict))
+    return "Failed to get a project"
 
 
 
