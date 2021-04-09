@@ -318,7 +318,7 @@ def get_single_project(id):
         hardware_set_2_data = hardware_set_2_data[name_index2:]
         
 
-        h1_data = '{'
+        h1_data = '\"{'
         quote_count = 0
         for ch in hardware_set_1_data:
             if ch != '\'' or quote_count == 2 or quote_count == 3:
@@ -326,7 +326,7 @@ def get_single_project(id):
             if ch == '\'':
                 quote_count+=1
 
-        h2_data = '{'
+        h2_data = '\"{'
         quote_count = 0
         for ch in hardware_set_2_data:
             if ch != '\'' or quote_count == 2 or quote_count == 3:
@@ -334,17 +334,16 @@ def get_single_project(id):
             if ch == '\'':
                 quote_count+=1
 
-        h1_data = h1_data[:-1]
-        h2_data = h2_data[:-1]
+        h1_data = h1_data[:-1] + '\"'
+        h2_data = h2_data[:-1] + '\"'
+
 
         output.append(h1_data)
         output.append(h2_data)
+        print(str(output))
 
-        json_list = []
-        for i in output:
-            json_list.append(json.dumps(i))
 
-        return json_list
+        return json.dumps(output)
 
 
                    
