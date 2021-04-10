@@ -20,11 +20,9 @@ client = MongoClient(
 
 app = Flask(__name__)
 app.config.from_mapping(SECRET_KEY='dev')
-
-
+cors = CORS(app, supports_credentials=True)
 
 def create_app():
-    cors = CORS(app, support_credentials=True)
 
     from . import db
 
@@ -61,6 +59,7 @@ def decrypt(inputText):
     return "".join(newList)
 
 @app.route('/register', methods=('GET', 'POST'))
+@cross_origin(origins = "https://stormy-mesa-02604.herokuapp.com")
 def register():
     if request.method == 'POST':
         dictionary = json.loads(json.dumps(request.json))
@@ -86,11 +85,12 @@ def register():
             }
             db.insert_one(entry)
 
-            return redirect(url_for('login'))
+            return "successfully registered"
         
     return "This is being returned in place of a register HTML"
 
 @app.route('/login', methods=('GET', 'POST'))
+@cross_origin(origins = "https://stormy-mesa-02604.herokuapp.com")
 def login():
     if (request.method == 'POST'):
         dictionary = json.loads(json.dumps(request.json))
@@ -106,7 +106,7 @@ def login():
             error = 'No matching email and password combination'
         if (error is None):
             session['email'] = encrypted_email
-            return redirect(url_for('get_projects'))
+            return "Successfully logged in"
     return("This is being returned in place of a login HTML")
 
 @app.route('/logout')
@@ -182,8 +182,8 @@ def projects():
             
     return "Failed to create a new project"
 
-@app.route('/project/checkin', methods=('GET','POST'))
-def check_in():
+@app.route('/project/checkin/<id>', methods=('GET','POST'))
+def check_in(id):
     # Given the name of the hardware set, and the amount requested to check in
     if (request.method == 'POST'):
         # Parse the input
@@ -192,11 +192,11 @@ def check_in():
         amount = dictionary['request']
 
         # Get the current project id from session
-        project_id = session['project id']
+        project_id = id
 
         # Search for the project in the database
         project_db = get_project_db()
-        project_data = project_db.find_one({"id":int(project_id)})
+        project_data = project_db.find_one({"id":str(project_id)})
 
         # Try to get the project's corresponding hardware sets
         hardware_db = get_hardware_set_db()
@@ -224,9 +224,8 @@ def check_in():
 
     return error
 
-@app.route('/project/checkout', methods=('GET','POST'))
-@cross_origin()
-def check_out():
+@app.route('/project/checkout/<id>', methods=('GET','POST'))
+def check_out(id):
     # Given the name of the hardware set, and the amount requested to check out
     if (request.method == 'POST'):
         # Parse the input
@@ -235,11 +234,11 @@ def check_out():
         amount = dictionary['request']
 
         # Get the current project id from session
-        project_id = session['project id']
+        project_id = id
 
         # Search for the project in the database
         project_db = get_project_db()
-        project_data = project_db.find_one({"id":int(project_id)})
+        project_data = project_db.find_one({"id":str(project_id)})
 
         # Try to get the project's corresponding hardware sets
         hardware_db = get_hardware_set_db()
@@ -300,14 +299,14 @@ def get_projects():
 
     return 'Failed to get projects'
 
-@app.route('/<id>', methods=('GET','POST'))
+@app.route('/project/<id>', methods=('GET','POST'))
 def get_single_project(id):
     if(request.method == 'GET'):
         session['project id'] = id
         project_db = get_project_db()
         hardware_db = get_hardware_set_db()
         output = []             
-        project_data = project_db.find_one({"id":int(id)})
+        project_data = project_db.find_one({"id":str(id)})
         hardware_set_array = project_data['hardware sets']
         hardware_id_1 = hardware_set_array[0]  
         hardware_id_2 = hardware_set_array[1] 
@@ -384,3 +383,10 @@ def get_hardware_set_db():
     g.collection = g.db['hardware sets']
 
     return g.collection
+
+@app.after_request
+def creds(response):
+    # response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+
+    return response
