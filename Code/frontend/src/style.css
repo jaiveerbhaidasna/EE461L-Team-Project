@@ -1,0 +1,31 @@
+@media all and (min-width: 480px) {
+    .Login {
+      padding: 60px 0;
+    }
+  
+    .Login form {
+      margin: 0 auto;
+      max-width: 320px;
+    }
+  }
+
+h1{
+  text-align: center;
+  padding:50px;
+}
+
+.projects{
+  background-color:Aqua;
+}
+
+.project{
+  background-color:yellow;
+}
+
+#newproject{
+  margin:8px;
+  padding:8px;
+  border: 2px solid blue;
+  border-radius: 20px;
+
+}
