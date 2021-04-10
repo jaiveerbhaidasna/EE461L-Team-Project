@@ -75,7 +75,8 @@ def register():
             error = 'Password is required.'
         email_found = db.find_one({"email": encrypted_email})
         if email_found is not None:
-            error = 'Email already taken'
+            error = "error"
+            return "error"
       
         if error is None:
             entry = {
@@ -85,9 +86,9 @@ def register():
             }
             db.insert_one(entry)
 
-            return "successfully registered"
+            return "success"
         
-    return "This is being returned in place of a register HTML"
+    return "error"
 
 @app.route('/login', methods=('GET', 'POST'))
 @cross_origin(origins = "https://stormy-mesa-02604.herokuapp.com")
@@ -104,10 +105,11 @@ def login():
         password_found = db.find_one({"password":encrypted_password})
         if (email_found is None or password_found is None):
             error = 'No matching email and password combination'
+            return "error"
         if (error is None):
             session['email'] = encrypted_email
-            return "Successfully logged in"
-    return("This is being returned in place of a login HTML")
+            return "success"
+    return "error"
 
 @app.route('/logout')
 def logout():
