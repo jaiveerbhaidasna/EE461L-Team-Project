@@ -148,7 +148,7 @@ class Project extends Component {
       .catch((error) => {
         console.log(error);
       });
-    //window.location.reload(true);
+    window.location.reload(true);
   }
 
   checkout(num, name1) {
@@ -163,7 +163,7 @@ class Project extends Component {
       .catch((error) => {
         console.log(error);
       });
-    //window.location.reload(true);
+    window.location.reload(true);
   }
 
   handleChange = (e) => {
